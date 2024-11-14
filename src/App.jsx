@@ -1,33 +1,30 @@
-import { useContext } from 'react';
-import AppProvider, { AppContext } from './done/Context';
-import { SOME_SECRET } from './done/constants';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
-const SuperSecret = () => {
-    return <div>MY SECRET: {SOME_SECRET}</div>;
+const useUrlStateParam = (name, initialValue) => {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [value, setValue] = useState(searchParams.get(name) ?? initialValue);
+
+    useEffect(() => {
+        searchParams.set(name, value);
+        setSearchParams(searchParams);
+    }, [value]);
+
+    return [value, setValue];
 };
 
-const Secured = ({ children, fallback }) => {
-    const { user } = useContext(AppContext);
+const Size = () => {
+    const [width, setWidth] = useUrlStateParam('w', 100);
+    const [height, setHeight] = useUrlStateParam('h', 100);
 
-    if (!user) return fallback;
-
-    return children;
-};
-
-const App = () => {
     return (
-        <Secured fallback={<div>Not logged in</div>}>
-            <SuperSecret />
-        </Secured>
+        <div>
+            Width: {width}, Height: {height}
+            <button onClick={() => setWidth(Number.parseInt(width) + 10)}>Increment Width</button>
+            <button onClick={() => setHeight(Number.parseInt(height) + 10)}>Increment Height</button>
+            <div style={{ width: `${width}px`, height: `${height}px`, backgroundColor: 'red' }} />
+        </div>
     );
 };
 
-const Wrap = () => {
-    return (
-        <AppProvider>
-            <App />
-        </AppProvider>
-    );
-};
-
-export default Wrap;
+export default Size;

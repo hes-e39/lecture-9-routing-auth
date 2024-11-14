@@ -1,4 +1,4 @@
-import { useUrlStateParam } from './hooks';
+import { useUrlStateParam } from '../hooks';
 
 const Size = () => {
     const [width, setWidth] = useUrlStateParam('w', 100);

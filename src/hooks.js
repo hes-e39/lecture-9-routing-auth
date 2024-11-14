@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { AppContext } from './done/Context';
 
 export const useCurrentUser = () => {
@@ -7,20 +7,14 @@ export const useCurrentUser = () => {
     return user;
 };
 
-export const useUrlStateParam = (key, defaultValue) => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const [searchParams] = useSearchParams();
-    const [value, setValue] = useState(searchParams.get(key) ?? defaultValue);
+const useUrlStateParam = (name, initialValue) => {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [value, setValue] = useState(searchParams.get(name) ?? initialValue);
 
     useEffect(() => {
-        searchParams.set(key, value);
-        navigate({
-            ...location,
-            search: searchParams.toString(),
-        });
+        searchParams.set(name, value);
+        setSearchParams(searchParams);
     }, [value]);
 
     return [value, setValue];
 };
-
